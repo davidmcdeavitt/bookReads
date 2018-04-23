@@ -1,18 +1,24 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import AddBookToList from './AddBookToList'
+import * as BooksAPI from './utils/BooksAPI'
 import { Link } from 'react-router-dom'
+import serializeForm from 'form-serialize'
 
-
-class ListBooks extends Component {
+class SearchForBooks extends Component {
   static PropTypes = {
     books: PropTypes.array.isRequired,
-    onClickChangeShelf: PropTypes.func.isRequired,
+    // onClickChangeShelf: PropTypes.func.isRequired,
   }
   state = {
     query: ''
   }
-
+  componentDidMount() {
+    BooksAPI.getAll().then((books) => {
+      this.setState(() => ({
+        books
+      }))
+    })
+  }
   updateQuery = (query) => {
     this.setState(() => ({
       query: query.trim()
@@ -26,10 +32,10 @@ class ListBooks extends Component {
 
   render() {
     const { query } = this.state
-    const { books, onClickChangeShelf } = this.props
+    const { books } = this.props
 
     const showingBooks = query === ''
-    ? books
+    ? "Search"
     : books.filter((b) => (
       b.name.toLowerCase().includes(query.toLowerCase())
     ))
@@ -38,9 +44,9 @@ class ListBooks extends Component {
       <div className='list-books'>
 
         <Link
-            to='/search'
-            className='jump-to-search-button'
-            >Jump to Search
+            to='/'
+            className='jump-to-home-button'
+            >Jump to Home
 
         </Link>
 
@@ -49,32 +55,22 @@ class ListBooks extends Component {
             className='search-books'
             type='text'
             placeholder='Search Books'
-            value={
-            query
-            }
+            value={query}
             onChange={(event) => this.updateQuery(event.target.value)}
           />
         </div>
 
-        {showingBooks.length !== books.length && (
-          <div className='showing-books'>
-            <span>
-              Now showing {showingBooks.length} of {books.length}
-            </span>
-            <button onClick={this.clearQuery}>Show All Books</button>
-          </div>
-        )}
+
 
         <ol className='books-list'>
           {showingBooks.map((book) => (
             <li key={book.id} className='book-list-item'>
               <div className='book-details'>
+                <p>{book.id}</p>
                 <p>{book.title}</p>
                 <p>{book.shelf}</p>
               </div>
-              <button onClick={() => onClickChangeShelf(book.shelf)}className='contact-dropdown'>
-                Change Shelf
-              </button>
+
             </li>
           ))}
         </ol>
@@ -83,10 +79,8 @@ class ListBooks extends Component {
     )
   }
 
-}
+  }
 
 
 
-
-
-export default ListBooks
+export default SearchForBooks
