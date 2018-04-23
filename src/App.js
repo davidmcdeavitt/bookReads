@@ -1,32 +1,27 @@
 import React, { Component } from 'react'
 import ListBooks from './ListBooks'
-
+import * as BooksAPI from './utils/BooksAPI'
 
 
 
 class App extends Component {
   state = {
-    books: [
-      {
-        id: '123456',
-        name: 'Stormy Daniels',
-        shelf: 'read'
-      },
-      {
-        id: '111111',
-        name: 'Donald Trump',
-        shelf: 'currentlyReading'
-      },
-    ]
+    books: []
   }
-
-  changeShelf = (book) => {
-    this.setState((currentState) => ({
-      books: currentState.books.shelf.filter((c) => {
-        return c.id !== book.id
-      })
-    }))
+  componentDidMount() {
+    BooksAPI.getAll().then((books) => {
+      this.setState(() => ({
+        books
+      }))
+    })
   }
+  // changeShelf = (book) => {
+  //   this.setState((currentState) => ({
+  //     books: currentState.books.shelf.filter((b) => {
+  //       return b.id !== book.id
+  //     })
+  //   }))
+  // }
 
   render() {
     return (
